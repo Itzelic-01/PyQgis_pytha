@@ -5,14 +5,16 @@ import processing
 from qgis.core import QgsProject
 from qgis.analysis import QgsNativeAlgorithms
 
-def ClusterByDen(input_path, output_path):
+def KmeansByDen(input):
+
+    input_path = "/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/"+ input + "/" + input + "_CLIP"
+    output_path = "/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/"+ input + "/" + input + "_Kmeans"
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
     
-    # INCHEON_CLIP_0 ~ INCHEON_CLIP_1772 까지 적용
-    for i in range(1773):
-        input_path_ = input_path + '/INCHEON_CLIP_' + str(i) + '.shp'
-        output_path_ = output_path + '/Cluster_' + str(i) + '.shp'
-        
-        layer = iface.addVectorLayer(input_path_, "", "ogr")
+    i = 0
+    for file in os.listdir(input_path):
+        layer = iface.addVectorLayer(input_path, "", "ogr")
         
         num_features = layer.featureCount()
     
@@ -41,7 +43,7 @@ def ClusterByDen(input_path, output_path):
             'INPUT' : layer,
             'FIELD_NAME' : 'cluster_id',
             'CLUSTERS' : k,
-            'OUTPUT' : output_path_
+            'OUTPUT' : output_path
         })
         # 현재 레이어 전체 삭제
         project = QgsProject.instance()
@@ -49,13 +51,10 @@ def ClusterByDen(input_path, output_path):
 
         for layer_id in layer_ids:
             project.removeMapLayer(layer_id)
-    
-    #for i in range(20):
-        #output_path_ = output_path + '/Cluster_' + str(i) + '.shp'
-        # output만 레이어에 출력
-        #outputLayer = iface.addVectorLayer(output_path_, "", "ogr")
 
-input_path = "/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/인천/INCHEON_CLIP"
-output_path = "/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/인천/INCHEON_Kmeans"
+        i+=1
+        # Kmeans 적용된 output파일 경로출력
+        output_path_ = output_path + '/Cluster_' + str(i) + '.shp'
 
-cluster_points(input_path, output_path)
+input = "INCHEON"
+KmeansByDen(input)

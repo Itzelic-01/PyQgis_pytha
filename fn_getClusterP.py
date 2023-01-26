@@ -6,7 +6,7 @@ from qgis.PyQt.QtCore import QVariant
 # 해당 지역(영문)을 입력하면 kmeans_clustering이 적용된 폴더의 경로를 찾아 
 # 각 shp파일을 순회하며 같은 cluster_id에 속하는 클러스터들의 밀도의 중심점을 찾는 알고리즘
 
-def getClusterP(input):
+def GetClusterP(input):
     input_path = '/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/' + input + '/' + input + '_Kmeans'
     output_path = '/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/' + input + '/' + input + '_ClusterP'
     if not os.path.exists(output_path):
@@ -77,4 +77,4 @@ def getClusterP(input):
                 print(output_path_)
 
 input = "INCHEON"
-getClusterP(input)
+GetClusterP(input)
