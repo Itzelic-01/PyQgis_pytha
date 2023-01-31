@@ -1,79 +1,36 @@
-# 밀도 조건 반영 클러스터링
-
 import os
-import processing
-from qgis.core import QgsProject, QgsVectorLayer
-from qgis.analysis import QgsNativeAlgorithms
+import pandas as pd
+import geopandas as gpd
 
-# Delete All Layers
-# 현재 열려있는 레이어 전체 삭제 함수
-def deleteAll() :
-    project = QgsProject.instance()
-    layer_ids = project.mapLayers().keys()
+# Merge Point SHP Files + add xy field
+# input에 지역 이름 문자열이 들어오면 해당 경로에 있는 클러스터 중심점 파일들에 대해 파일 병합을 수행
+# 병합된 파일에 x, y 좌표 추가해서 shp 파일로 추출
 
-    for layer_id in layer_ids:
-        project.removeMapLayer(layer_id)
-
-
-def KmeansByDen(input):
-    
-    input_path = '/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/' + input + '/' + input + '_CLIP'
-    output_path = '/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/' + input + '/' + input + '_Kmeans'
+def MergeP(input):
+    input_path = '/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/' + input + '/' + input + '_ClusterP'
+    output_path = "/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/"+ input + "/" + input + "_ResultP"
+    # 해당 경로에 해당 폴더 없으면 생성
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-        print(output_path)
     
-    i = 0
-    # INCHEON_CLIP_0 ~ INCHEON_CLIP_1772 까지 적용
-    for file in os.listdir(input_path):
-        # shp 파일만 로드
-        if file.endswith('.shp'):
-            file_path = os.path.join(input_path, file)
-            input_layer = QgsVectorLayer(file_path, 'input_layer', 'ogr')
-            if not input_layer.isValid():
-                print("Layer is not Available")
-            else:
-                num_features = input_layer.featureCount()
-            
-                # 밀도 계산 (클러스터 개수 k를 결정하는 기준)
-                # extent() 함수로 포인트를 포함하는 사각형 도형을 생성, 
-                # extent의 너비와 높이를 곱해 area 영역의 넓이를 구함
-                extent = input_layer.extent()
-                area = extent.width() * extent.height()
-                
-                # area가 0인 경우 (피처 수가 0개 or 1개인 경우)
-                if area == 0 :
-                    density = 0
-                    print("CLIP_", i, " - No Density : {}".format(density),"---", num_features, " features")
-                else :
-                    density = num_features / area
-                    print("CLIP_", i, " - Density: {}".format(density)," ", num_features, " features")
-                    
-                # density 기반 클러스터 개수 설정
-                if density == 0 or density >= 0.01 :
-                    k = 1
-                elif density >= 0.005 :
-                    k = 2
-                else :
-                    k = 3
-                print(k)
+    # input_path 경로에 있는 shp파일 리스트
+    shp_files = [f for f in os.listdir(input_path) if f.endswith('.shp')]
+    # 결과 저장할 geopandas dataframe
+    merged_gdf = gpd.GeoDataFrame()
+    
+    for shp in shp_files:
+        gdf = gpd.read_file(os.path.join(input_path, shp))
 
-                # output 경로 설정
-                file_name = 'Kmeans_' + str(i) + '.shp'
-                output_path_ = os.path.join(output_path, file_name)
-                print(output_path_)
+        # id 컬럼 추가
+        gdf['id'] = gdf.index
 
-                ## k-means clustering 수행
-                result = processing.run("native:kmeansclustering", {
-                    'INPUT' : input_layer,
-                    'FIELD_NAME' : 'cluster_id',
-                    'CLUSTERS' : k,
-                    'OUTPUT' : output_path_
-                })
-                # output_layer = iface.addVectorLayer(output_path_, "", "ogr")
-                i += 1
+        # xy좌표 컬럼 추가
+        gdf['x'] = gdf.geometry.x
+        gdf['y'] = gdf.geometry.y
 
-                print("처리 완료" + output_path_)
+        merged_gdf = pd.concat([merged_gdf, gdf])
 
-input = "INCHEON"
-KmeansByDen(input)
+    merged_gdf.to_file(os.path.join(output_path, 'ClusterPoint.shp'))
+
+input_MergeP = "INCHEON"
+MergeP(input_MergeP)

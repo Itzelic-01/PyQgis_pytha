@@ -32,7 +32,8 @@ def GetClusterP(input):
                 cluster_dict = {}
 
                 # input레이어의 각 피처에 대해 반복
-                for feature in input_layer.getFeatures():
+                features = input_layer.getFeatures()
+                for feature in features:
                     # get the cluster_id attribute value
                     cluster_id = feature['cluster_id']
                     
