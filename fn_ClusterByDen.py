@@ -7,8 +7,8 @@ from qgis.analysis import QgsNativeAlgorithms
 
 def KmeansByDen(input):
     
-    input_path = '/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/' + input + '/' + input + '_CLIP'
-    output_path = '/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/' + input + '/' + input + '_Kmeans'
+    input_path = '/파일경로' + input + '/' + input + '_CLIP'
+    output_path = '/파일경로' + input + '/' + input + '_Kmeans'
     if not os.path.exists(output_path):
         os.makedirs(output_path)
         print(output_path)
