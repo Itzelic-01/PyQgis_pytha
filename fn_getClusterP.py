@@ -7,8 +7,8 @@ from qgis.PyQt.QtCore import QVariant
 # 각 shp파일을 순회하며 같은 cluster_id에 속하는 클러스터들의 밀도의 중심점을 찾는 알고리즘
 
 def GetClusterP(input):
-    input_path = '/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/' + input + '/' + input + '_Kmeans'
-    output_path = '/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/' + input + '/' + input + '_ClusterP'
+    input_path = '/파일경로' + input + '/' + input + '_Kmeans'
+    output_path = '/파일경로' + input + '/' + input + '_ClusterP'
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     
