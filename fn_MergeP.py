@@ -7,8 +7,8 @@ import geopandas as gpd
 # 병합된 파일에 x, y 좌표 추가해서 shp 파일로 추출
 
 def MergeP(input):
-    input_path = '/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/' + input + '/' + input + '_ClusterP'
-    output_path = "/Users/sohyunkim/Desktop/works/부동산데이터작업/지역별건물shp/"+ input + "/" + input + "_ResultP"
+    input_path = '/파일경로' + input + '/' + input + '_ClusterP'
+    output_path = '/파일경로' + input + "/" + input + "_ResultP"
     # 해당 경로에 해당 폴더 없으면 생성
     if not os.path.exists(output_path):
         os.makedirs(output_path)
